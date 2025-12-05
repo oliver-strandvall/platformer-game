@@ -55,9 +55,9 @@ let lava = {
 }
 
 const levelData = [
-    {level: 1, distance: 1850, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, difficulty: "Easy", levelname: "The Basics", levelcolor: "rgba(35, 65, 115, 1)"},
-    {level: 2, distance: 2000, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, difficulty: "Medium", levelname: "Tower of Spikes", levelcolor: "rgba(35, 42, 115, 1)"},
-    {level: 2, distance: 2000, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, difficulty: "Hard", levelname: "?", levelcolor: "rgba(58, 35, 115, 1)"}
+    {level: 1, distance: 1850, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, difficulty: "Easy", lavaspeed: 1, levelname: "The Basics", levelcolor: "rgba(35, 65, 115, 1)"},
+    {level: 2, distance: 2750, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, difficulty: "Medium", lavaspeed: 1.2, levelname: "Tower of Spikes", levelcolor: "rgba(35, 42, 115, 1)"},
+    {level: 2, distance: 2000, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, difficulty: "Hard", lavaspeed: 1.4, levelname: "?", levelcolor: "rgba(58, 35, 115, 1)"}
 ]
 
 const level = [
@@ -80,7 +80,7 @@ const level = [
     {x: 550, y: -850, width: 100, height: 25, type:"block"},
     {x: 0, y: -950, width: 250, height: 150, type:"block"},
     {x: 475, y: -1095, width: 250, height: 20, type:"block"},
-    {x: 475, y: -1100, width: 250, height: 5, type:"finish"},
+    {x: 485, y: -1096, width: 230, height: 5, type:"finish"},
     ],
     [
     {y: canvas.height - 50, width: canvas.width, height: 100, x: canvas.width / 2 - canvas.width / 2, type:"block"},
@@ -115,8 +115,21 @@ const level = [
     {x: 300, y: -645, width: 50, height: 5, type:"jumpad"},
     {x: 825, y: -645, width: 50, height: 5, type:"jumpad"},
     {x: 550, y: -740, width: 100, height: 100, type:"spike"},
-    {x: 0, y: -950, width: 250, height: 50, type:"block"},
-    {x: 950, y: -950, width: 250, height: 50, type:"block"},
+    {x: 0, y: -925, width: 250, height: 50, type:"block"},
+    {x: 950, y: -925, width: 250, height: 50, type:"block"},
+    {x: 575, y: -1000, width: 50, height: 25, type:"block"},
+    {x: 575, y: -1150, width: 50, height: 25, type:"block"},
+    {x: 0, y: -1300, width: 400, height: 50, type:"block"},
+    {x: 800, y: -1300, width: 400, height: 50, type:"block"},
+    {x: 175, y: -1450, width: 850, height: 50, type:"block"},
+    {x: 0, y: -1600, width: 150, height: 25, type:"block"},
+    {x: 1050, y: -1600, width: 150, height: 25, type:"block"},
+    {x: 400, y: -1725, width: 50, height: 25, type:"block"},
+    {x: 400, y: -1730, width: 50, height: 5, type:"jumpad"},
+    {x: 750, y: -1725, width: 50, height: 25, type:"block"},
+    {x: 750, y: -1730, width: 50, height: 5, type:"jumpad"},
+    {x: 555, y: -2000, width: 100, height: 25, type:"block"},
+    {x: 565, y: -2001, width: 80, height: 5, type:"finish"},
     ],
     [
     {y: canvas.height - 50, width: canvas.width, height: 100, x: canvas.width / 2 - canvas.width / 2, type:"block"},
@@ -253,7 +266,7 @@ function updateGame(deltaTime) {
         toMenu()
     }
 
-    lava.y--
+    lava.y-= levelData[selectedLevel].lavaspeed;
 
     if(isOverlapping(player, lava)) {
         restartGame()
