@@ -2,7 +2,7 @@ import Input, { Keys, MouseButtons } from './input.js';
 import Button from './button.js';
 const canvas = document.getElementById("canvas");
 const input = new Input(canvas);
-const StartButton = new Button(input, {x: canvas.width / 2 - 150, y: canvas.height / 1.3, text: "Start", width: 300, height: 150, fillColor: "rgba(75, 145, 250, 1)", hoverFillColor: "rgba(45, 145, 250, 1)"});
+const StartButton = new Button(input, {x: canvas.width / 2 - 150, y: canvas.height / 1.3, text: "Start Run", width: 300, height: 150, fillColor: "rgba(75, 145, 250, 1)", hoverFillColor: "rgba(45, 145, 250, 1)"});
 const MenuButton = new Button(input, {x: canvas.width / 2 - 150, y: canvas.height / 1.3, text: "Menu", width: 300, height: 150, fillColor: "rgba(75, 145, 250, 1)", hoverFillColor: "rgba(45, 145, 250, 1)"});
 /**
  * @type {CanvasRenderingContext2D}
@@ -12,9 +12,12 @@ const ctx = canvas.getContext("2d")
 let allowJump = false
 let selectedLevel = 0
 
+let playerstartx = canvas.width / 2 - 25
+let playerstarty = canvas.height - 100
+
 let player = {
-    x: canvas.width / 2 - 25,
-    y: canvas.height - 100,
+    x: playerstartx,
+    y: playerstarty,
     width: 50,
     height: 50
 }
@@ -55,9 +58,9 @@ let lava = {
 }
 
 const levelData = [
-    {level: 1, distance: 1850, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, difficulty: "Easy", lavaspeed: 1, levelname: "The Basics", levelcolor: "rgba(35, 65, 115, 1)"},
-    {level: 2, distance: 2750, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, difficulty: "Medium", lavaspeed: 1.2, levelname: "Tower of Spikes", levelcolor: "rgba(35, 42, 115, 1)"},
-    {level: 2, distance: 2000, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, difficulty: "Hard", lavaspeed: 1.4, levelname: "?", levelcolor: "rgba(58, 35, 115, 1)"}
+    {level: 1, distance: 1850, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, besttime: 0, difficulty: "Easy", lavaspeed: 1, levelname: "The Parkour Tower", levelcolor: "rgba(35, 65, 115, 1)"},
+    {level: 2, distance: 2750, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, besttime: 0, difficulty: "Medium", lavaspeed: 1.2, levelname: "The Spikey Tower", levelcolor: "rgba(35, 42, 115, 1)"},
+    {level: 2, distance: 2600, best: 0, cleared: "no", attempts: 0, bestattempts: 0, currentattempts: 0, besttime: 0, difficulty: "Hard", lavaspeed: 1.4, levelname: "The Lava Tower", levelcolor: "rgba(58, 35, 115, 1)"}
 ]
 
 const level = [
@@ -84,8 +87,8 @@ const level = [
     ],
     [
     {y: canvas.height - 50, width: canvas.width, height: 100, x: canvas.width / 2 - canvas.width / 2, type:"block"},
-    {x: 0, y: -levelData[0].distance, width: 50, height: canvas.height + levelData[0].distance, type:"block"},
-    {x: canvas.width - 50, y: -levelData[0].distance, width: 50, height: canvas.height + levelData[0].distance, type:"block"},
+    {x: 0, y: -levelData[1].distance, width: 50, height: canvas.height + levelData[1].distance, type:"block"},
+    {x: canvas.width - 50, y: -levelData[1].distance, width: 50, height: canvas.height + levelData[1].distance, type:"block"},
     {x: 300, y: 600, width: 50, height: 150, type:"block"},
     {x: 850, y: 600, width: 50, height: 150, type:"block"},
     {x: 475, y: 450, width: 250, height: 25, type:"block"},
@@ -133,9 +136,31 @@ const level = [
     ],
     [
     {y: canvas.height - 50, width: canvas.width, height: 100, x: canvas.width / 2 - canvas.width / 2, type:"block"},
-    {x: 0, y: -levelData[0].distance, width: 50, height: canvas.height + levelData[0].distance, type:"block"},
-    {x: canvas.width - 50, y: -levelData[0].distance, width: 50, height: canvas.height + levelData[0].distance, type:"block"},
-    {x: 300, y: 745, width: 50, height: 5, type:"jumpad"},
+    {x: 0, y: -levelData[2].distance, width: 50, height: canvas.height + levelData[2].distance, type:"block"},
+    {x: canvas.width - 50, y: -levelData[2].distance, width: 50, height: canvas.height + levelData[2].distance, type:"block"},
+    {x: 0, y: 625, width: 400, height: 125, type:"block"},
+    {x: 350, y: 620, width: 50, height: 5, type:"jumpad"},
+    {x: 700, y: 400, width: 500, height: 50, type:"block"},
+    {x: 700, y: 395, width: 50, height: 5, type:"jumpad"},
+    {x: 0, y: 200, width: 500, height: 50, type:"block"},
+    {x: 450, y: 195, width: 50, height: 5, type:"jumpad"},
+    {x: 700, y: 0, width: 500, height: 50, type:"block"},
+    {x: 1100, y: -5, width: 50, height: 5, type:"jumpad"},
+    {x: 1100, y: -300, width: 50, height: 25, type:"block"},
+    {x: 800, y: -400, width: 25, height: 25, radius: 25, type:"jumpblock"},
+    {x: 350, y: -300, width: 50, height: 25, type:"block"},
+    {x: 250, y: -500, width: 25, height: 25, radius: 25, type:"jumpblock"},
+    {x: 350, y: -650, width: 50, height: 25, type:"block"},
+    {x: 50, y: -750, width: 50, height: 25, type:"block"},
+    {x: 50, y: -755, width: 50, height: 5, type:"jumpad"},
+    {x: 350, y: -1000, width: 800, height: 50, type:"block"},
+    {x: 1000, y: -1150, width: 25, height: 25, radius: 25, type:"jumpblock"},
+    {x: 50, y: -1300, width: 800, height: 50, type:"block"},
+    {x: 200, y: -1450, width: 25, height: 25, radius: 25, type:"jumpblock"},
+    {x: 350, y: -1600, width: 800, height: 50, type:"block"},
+    {x: 575, y: -1605, width: 50, height: 5, type:"jumpad"},
+    {x: 50, y: -1850, width: 250, height: 25, type:"block"},
+    {x: 100, y: -1851, width: 150, height: 5, type:"finish"},
     ]
 ]
 
@@ -145,9 +170,15 @@ let firstPlay = true
 
 let newBest = false
 
+let timer = 0;
+
+let elapsed = 0;
+
 let lastTime = performance.now();
 
 let opacity = 1;
+
+let fading = -1
 
 gameLoop(performance.now());
 
@@ -177,6 +208,8 @@ function gameLoop(currentTime) {
 }
 
 function updateGame(deltaTime) {
+
+    updateTimer(deltaTime);
 
     // Reset jump state each frame
     allowJump = false
@@ -242,8 +275,8 @@ function updateGame(deltaTime) {
                 velocity.y = -1000;
                 allowJump = false
             } else if(level[selectedLevel][i].type === "jumpblock") {
-                if (input.getKeyDown(Keys.W) || input.getKeyDown(Keys.Space) || input.getMouseButtonDown(MouseButtons.Left)) {
-                    velocity.y = -10; 
+                if (input.getKeyDown(Keys.W) || input.getKeyDown(Keys.UpArrow)) {
+                    velocity.y = -700; 
                 }
             } else if(level[selectedLevel][i].type === "finish") {
                 currentScene = "levelcleared"
@@ -334,9 +367,10 @@ function renderGame() {
     ctx.fillStyle = "rgba(255, 255, 255, 1)";
     ctx.textAlign = "center";
     ctx.fillText(Math.round(Math.abs(player.y - 700)) + " / " + levelData[selectedLevel].distance, canvas.width / 2, 100);
-    ctx.textAlign = "left"
+    ctx.textAlign = "left";
     ctx.font = "40px Arial";
-    ctx.fillText("Exit (E)", 15, 40)
+    ctx.fillText("End Run (E)", 15, 40);
+    ctx.fillText(timer, 15, 100);
 
     if (opacity > 0) {
         ctx.globalAlpha = opacity;
@@ -417,13 +451,13 @@ function updateGameStart() {
     }
     }
 
-    ctx.fillStyle = "rgba(0, 0, 0, 1)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
     ctx.fillRect(300, 225, 600, 350)
     ctx.textAlign = "center";
     ctx.fillStyle = "rgba(255, 255, 255, 1)";
     ctx.font = "35px Arial";
-    ctx.fillText(levelData[selectedLevel].levelname, canvas.width / 2, canvas.height / 2.5);
-    ctx.fillText("Difficulty:", canvas.width / 2.25, canvas.height / 2);
+    ctx.fillText(levelData[selectedLevel].levelname, canvas.width / 2, canvas.height / 2.75);
+    ctx.fillText("Difficulty:", canvas.width / 2.25, canvas.height / 2.25);
 
     if(levelData[selectedLevel].difficulty === "Easy") {
         ctx.fillStyle = "rgba(65, 200, 0, 1)";
@@ -433,17 +467,16 @@ function updateGameStart() {
         ctx.fillStyle = "rgba(255, 0, 0, 1)";
     }
 
-    ctx.fillText(levelData[selectedLevel].difficulty, canvas.width / 1.75, canvas.height / 2);
+    ctx.fillText(levelData[selectedLevel].difficulty, canvas.width / 1.75, canvas.height / 2.25);
         if(levelData[selectedLevel].cleared === "yes") {
             ctx.fillStyle = "rgba(255, 255, 255, 1)";
-            ctx.fillText("Total Attempts: " + levelData[selectedLevel].attempts, canvas.width / 2, canvas.height / 1.65)
-            ctx.fillStyle = "rgba(65, 200, 0, 1)";
-            ctx.fillText("Level Cleared! | Best Attempts: " + levelData[selectedLevel].bestattempts, canvas.width / 2, canvas.height / 1.5)
+            ctx.fillText("Total Attempts: " + levelData[selectedLevel].attempts, canvas.width / 2, canvas.height / 1.8)
+            ctx.fillText("Best Run: " + levelData[selectedLevel].bestattempts + " | Best Time: " + levelData[selectedLevel].besttime, canvas.width / 2, canvas.height / 1.5)
         } else {
             if(selectedLevel > 0) {
                 if(levelData[selectedLevel - 1].cleared === "yes") {
                     ctx.fillStyle = "rgba(255, 255, 255, 1)";
-                    ctx.fillText("Total Attempts: " + levelData[selectedLevel].attempts, canvas.width / 2, canvas.height / 1.65)
+                    ctx.fillText("Total Attempts: " + levelData[selectedLevel].attempts, canvas.width / 2, canvas.height / 1.8)
                     ctx.fillText("Best: " + levelData[selectedLevel].best + " / " + levelData[selectedLevel].distance, canvas.width / 2, canvas.height / 1.5)
                 } else {
                     ctx.fillStyle = "rgba(255, 0, 0, 1)";
@@ -451,20 +484,20 @@ function updateGameStart() {
                 }
             } else {
                 ctx.fillStyle = "rgba(255, 255, 255, 1)";
-                 ctx.fillText("Total Attempts: " + levelData[selectedLevel].attempts, canvas.width / 2, canvas.height / 1.65)
+                 ctx.fillText("Total Attempts: " + levelData[selectedLevel].attempts, canvas.width / 2, canvas.height / 1.8)
                 ctx.fillText("Best: " + levelData[selectedLevel].best + " / " + levelData[selectedLevel].distance, canvas.width / 2, canvas.height / 1.5)
             }
         }
         ctx.textAlign = "left";
 
     if(StartButton.clicked()) {
-        // if(selectedLevel > 0) {
-        //     if(levelData[selectedLevel - 1].cleared === "yes") {
+        if(selectedLevel > 0) {
+            if(levelData[selectedLevel - 1].cleared === "yes") {
                 restartGame()
-        //     }
-        // } else {
-    //         restartGame()
-    //     }
+            }
+        } else {
+            restartGame()
+        }
     }
 }
 
@@ -477,18 +510,41 @@ function updatelevelCleared() {
         newBest = true
     }
 
-    ctx.font = "50px Arial";
-    ctx.fillStyle = "rgba(255, 255, 255, 1)";
-    ctx.textAlign = "center";
-    ctx.fillText("Level Cleared!", canvas.width / 2, canvas.height / 2.5);
-
-    if(newBest) {
-        ctx.fillStyle = "rgba(65, 200, 0, 1)";
-        ctx.fillText("New Best!", canvas.width / 2, canvas.height / 5);
-        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+    if(levelData[selectedLevel].besttime === 0 || timer < levelData[selectedLevel].besttime) {
+        levelData[selectedLevel].besttime = timer
+        newBest = true
     }
 
-    ctx.fillText("Attempts: " + levelData[selectedLevel].currentattempts, canvas.width / 2, canvas.height / 1.5);
+    ctx.textAlign = "center";
+    ctx.font = "50px Arial";
+
+    if(newBest) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+        ctx.fillRect(300, 300, 600, 275)
+        opacity += fading * 0.01; // change speed here
+        if (opacity <= 0) {
+            opacity = 0;
+            fading = 1; // switch to fade in
+        } else if (opacity >= 1) {
+            opacity = 1;
+            fading = -1; // switch to fade out
+        }
+        ctx.globalAlpha = opacity;
+        ctx.fillStyle = "rgba(65, 200, 0, 1)";
+        ctx.fillText("New Best!", canvas.width / 2, canvas.height / 2.25);
+        ctx.globalAlpha = 1;
+    } else {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+        ctx.fillRect(300, 400, 600, 175)
+    }
+
+    ctx.fillStyle = "rgba(255, 255, 255, 1)";
+    ctx.fillText("Level Cleared!", canvas.width / 2, canvas.height / 5);
+
+    ctx.font = "35px Arial";
+    ctx.fillText("Attempts: " + levelData[selectedLevel].currentattempts, canvas.width / 2, canvas.height / 1.8);
+    ctx.fillText("Time: " + timer, canvas.width / 2, canvas.height / 1.5);
+
     ctx.textAlign = "left"
     ctx.fillStyle = "rgba(0, 0, 0, 1)"
 
@@ -510,14 +566,21 @@ function updatelevelCleared() {
 // }
 
 function restartGame() {
-    player.x = canvas.width / 2 - 25,
-    player.y = canvas.height - 150,
+    player.x = playerstartx,
+    player.y = playerstarty,
     velocity.y = 0
     velocity.x = 0
     currentScene = "gameplay"
     levelData[selectedLevel].currentattempts += 1
     lava.y = canvas.height + 200
     opacity = 1;
+    elapsed = 0;
+    timer = 0;
+}
+
+function updateTimer(deltaTime) {
+    elapsed += deltaTime;
+    timer = elapsed.toFixed(2);
 }
 
 function toMenu() {
