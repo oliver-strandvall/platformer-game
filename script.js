@@ -535,7 +535,9 @@ function updatelevelCleared() {
         ctx.globalAlpha = 1;
     } else {
         ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
-        ctx.fillRect(300, 400, 600, 175)
+        ctx.fillRect(300, 300, 600, 275)
+        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillText("Stats:", canvas.width / 2, canvas.height / 2.25);
     }
 
     ctx.fillStyle = "rgba(255, 255, 255, 1)";
